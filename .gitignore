@@ -1,2 +1,18 @@
-trained_models
-outputs
+# Training outputs
+trained_models/
+vae_output/
+
+# Analysis outputs
+outputs/
+
+# Python cache
+__pycache__/
+*.pyc
+
+# Checkpoints and models
+*.pt
+*.pth
+*.ckpt
+
+# OS files
+.DS_Store
