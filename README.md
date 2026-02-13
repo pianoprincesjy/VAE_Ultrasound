@@ -1,62 +1,125 @@
-# VAE Decoder Layer-wise Analysis Tool
-나는서재윤 
-Stable Diffusion VAE의 디코더 레이어별로 두 이미지 간의 차이를 분석하는 도구입니다.
-dㅇㅇㅇ아ㅓㅏ어ㅏ어ㅏ어
-## 기능
+# VAE Training and Analysis Tools
 
-- 두 이미지를 VAE에 입력하여 디코더의 각 레이어 출력 수집
-- 레이어별 출력 차이 측정 (L2 distance, Cosine similarity)
-- 차이가 큰 레이어 자동 식별
-- 단일 이미지 쌍 분석 및 폴더 배치 처리 지원
+This repository contains tools for training a Variational Autoencoder (VAE) from scratch and analyzing layer-wise differences in the VAE decoder.
 
-## 설치
+## Features
+
+### 1. VAE Training from Scratch
+- Train VAE using Stable Diffusion architecture with random weight initialization
+- Train on custom breast tumor images
+- Reconstruction loss (MSE) + KL divergence loss
+- Automatic checkpoint saving and visualization
+- Training progress monitoring
+
+### 2. VAE Decoder Layer-wise Analysis
+- Collect decoder layer outputs for two input images
+- Measure layer-wise differences (L2 distance, Cosine similarity)
+- Identify layers with largest differences
+- Support for single image pair analysis and batch folder processing
+
+## Installation
 
 ```bash
 cd /home/jaey00ns/MedCLIP-SAMv2-main/vae
-pip install torch torchvision numpy matplotlib seaborn pillow tqdm omegaconf
+
+# Activate conda environment (recommended)
+conda activate medclipsamv2sd
+
+# Install dependencies
+pip install torch torchvision numpy pillow tqdm omegaconf
 ```
 
-## 디렉토리 구조
+## Directory Structure
 
 ```
 vae/
-├── analyze_vae_layers.py    # 메인 분석 스크립트
-├── run_analysis.sh           # 실행 스크립트
-├── README.md                 # 이 파일
-└── outputs/                  # 출력 결과 (자동 생성)
-    ├── single/              # 단일 이미지 쌍 결과
-    │   ├── layer_differences.json
-    │   ├── layer_differences_plot.png
-    │   └── reconstructed_images.png
-    └── batch/               # 폴더 배치 처리 결과
-        ├── image_name_1/
-        ├── image_name_2/
-        └── aggregated_differences.png
+├── train_vae.py              # VAE training script
+├── train_vae.sh              # Training execution script
+├── analyze_vae_layers.py     # Layer-wise analysis script
+├── run_analysis.sh           # Analysis execution script
+├── README.md                 # This file
+├── vae_output/              # Training outputs (auto-generated)
+│   ├── checkpoints/         # Model checkpoints
+│   ├── reconstructions/     # Reconstruction visualizations
+│   ├── training_history.json
+│   └── training_curves.png
+└── outputs/                 # Analysis outputs (auto-generated)
+    ├── single/              # Single image pair results
+    └── batch/               # Batch processing results
 ```
 
-## 사용법
+## Usage
 
-### 1. 단일 이미지 쌍 분석
+### 1. Training VAE from Scratch
 
-두 개의 이미지를 직접 지정하여 분석합니다.
+The VAE uses Stable Diffusion architecture but trains weights from random initialization.
+
+#### Using Shell Script (Recommended)
 
 ```bash
-# 셸 스크립트 실행 권한 부여
-chmod +x run_analysis.sh
+# Set execution permission
+chmod +x train_vae.sh
 
-# L2 distance만 사용
-./run_analysis.sh single --img1 tumor.jpg --img2 masked_tumor.jpg --method l2
+# Run training
+./train_vae.sh
+```
 
-# Cosine similarity만 사용
-./run_analysis.sh single --img1 tumor.jpg --img2 masked_tumor.jpg --method cosine
+The script uses GPU 5 by default (via `CUDA_VISIBLE_DEVICES=5`).
 
-# 둘 다 사용 (권장)
+#### Using Python Directly
+
+```bash
+export CUDA_VISIBLE_DEVICES=5
+
+python train_vae.py \
+    --train_dir ../data/breast_tumors/train_images \
+    --config_path ../stable-diffusion/configs/stable-diffusion/v1-inference.yaml \
+    --output_dir trained_models \
+    --batch_size 8 \
+    --epochs 100 \
+    --lr 1e-4 \
+    --kl_weight 1.0 \
+    --img_size 256 \
+    --device cuda:0 \
+    --save_interval 10
+```
+
+#### Training Arguments
+
+- `--train_dir`: Path to training images directory
+- `--config_path`: Path to VAE config file (Stable Diffusion config)
+- `--output_dir`: Directory to save training outputs
+- `--batch_size`: Training batch size (default: 8)
+- `--epochs`: Number of training epochs (default: 100)
+- `--lr`: Learning rate (default: 1e-4)
+- `--kl_weight`: Weight for KL divergence term (default: 1.0)
+- `--img_size`: Input image size (default: 256)
+- `--device`: Device to use (default: cuda:0)
+- `--save_interval`: Save checkpoint every N epochs (default: 10)
+
+#### Training Outputs
+
+- **checkpoints/**: Model checkpoints saved at intervals
+  - `vae_epoch_10.pt`, `vae_epoch_20.pt`, etc.
+  - Contains model state, optimizer state, and loss values
+- **reconstructions/**: Reconstruction comparisons
+  - `recon_epoch_10.png`, `recon_epoch_20.png`, etc.
+  - Shows original images (top row) and reconstructions (bottom row)
+- **training_history.json**: Training metrics per epoch
+- **training_curves.png**: Loss curves visualization
+- **vae_final.pt**: Final trained model
+
+### 2. VAE Layer-wise Analysis
+
+#### Single Image Pair Analysis
+
+Compare two images and analyze layer-wise differences:
+
+```bash
+# Using shell script
 ./run_analysis.sh single --img1 tumor.jpg --img2 masked_tumor.jpg --method both
-```
 
-또는 Python 직접 실행:
-
-```bash
+# Using Python directly
 python analyze_vae_layers.py \
     --mode single \
     --img1 /path/to/image1.jpg \
@@ -66,28 +129,27 @@ python analyze_vae_layers.py \
     --output ./outputs
 ```
 
-### 2. 폴더 배치 처리
+#### Batch Folder Processing
 
-폴더 구조:
+Process multiple image pairs organized in folders:
+
 ```
 data/ultrasound_pairs/
-├── positive/          # 종양 있는 이미지들
+├── positive/          # Images with tumors
 │   ├── case001.jpg
 │   ├── case002.jpg
 │   └── ...
-└── negative/          # 종양 마스킹한 이미지들
-    ├── case001.jpg    # positive와 같은 이름
+└── negative/          # Masked images
+    ├── case001.jpg    # Same filename as positive
     ├── case002.jpg
     └── ...
 ```
 
-실행:
-
 ```bash
-# 셸 스크립트 사용
+# Using shell script
 ./run_analysis.sh folder --folder ./data/ultrasound_pairs --method both
 
-# 또는 Python 직접 실행
+# Using Python directly
 python analyze_vae_layers.py \
     --mode folder \
     --folder ./data/ultrasound_pairs \
@@ -96,146 +158,191 @@ python analyze_vae_layers.py \
     --output ./outputs
 ```
 
-## 출력 설명
+## Training Details
 
-### 단일 이미지 쌍 분석 결과
+### Loss Function
 
-1. **layer_differences.json**: 각 레이어별 수치 결과
-   ```json
-   {
-     "decoder.conv_in": {
-       "l2_value": 0.0234,
-       "cosine_value": 0.0012,
-       "shape": [1, 512, 64, 64]
-     },
-     ...
-   }
-   ```
+The VAE is trained with two loss components:
 
-2. **layer_differences_plot.png**: 레이어별 차이 시각화
-   - 막대 그래프로 각 레이어의 차이 표시
-   - 상위 5개 레이어 하이라이트
+1. **Reconstruction Loss**: Mean Squared Error (MSE) between input and reconstructed images
+2. **KL Divergence**: Regularization term to keep latent distribution close to standard normal
 
-3. **reconstructed_images.png**: 원본 및 복원 이미지 비교
-   - 좌측: 원본 이미지
-   - 우측: VAE 복원 이미지
+```
+Total Loss = Reconstruction Loss + kl_weight × KL Divergence
+```
 
-### 폴더 배치 처리 결과
+### Architecture
 
-- 각 이미지 쌍마다 개별 폴더에 위와 동일한 결과 저장
-- **aggregated_differences.png**: 모든 이미지 쌍의 평균 차이
-- **aggregated_results.json**: 평균 및 표준편차
+Uses Stable Diffusion VAE architecture:
+- **Encoder**: Compresses images to latent representation
+- **Decoder**: Reconstructs images from latent codes
+- **Latent Space**: Gaussian distribution with learned mean and variance
 
-## 차이 측정 방법
+### Data Processing
 
-### L2 Distance (Euclidean Distance)
-- 두 텐서 간의 유클리드 거리 측정
-- 값이 클수록 차이가 큼
-- 절대적인 픽셀 값 차이에 민감
+- Images are resized to 256×256
+- Normalized to [-1, 1] range
+- Random shuffling during training
+- Automatic handling of different image formats (PNG, JPG, JPEG)
 
-### Cosine Similarity
-- 두 벡터의 방향 유사도 측정 (0~1)
+## Analysis Details
+
+### Difference Metrics
+
+#### L2 Distance (Euclidean Distance)
+- Measures absolute difference between layer outputs
+- Higher values indicate larger differences
+- Sensitive to magnitude changes
+
+#### Cosine Similarity
+- Measures directional similarity between layer outputs (0~1)
 - Cosine Dissimilarity = 1 - Cosine Similarity
-- 크기보다는 패턴 차이에 민감
+- Sensitive to pattern changes rather than magnitude
 
-### Both (권장)
-- 두 방법을 모두 계산하여 종합적으로 분석
+#### Both (Recommended)
+- Compute both metrics for comprehensive analysis
 
-## GPU 설정
+### Output Files
 
-기본값은 `cuda:5`입니다. 변경하려면:
+#### Single Pair Analysis
+1. **layer_differences.json**: Numerical results per layer
+2. **layer_differences_plot.png**: Bar chart visualization
+3. **reconstructed_images.png**: Original vs reconstructed comparison
+
+#### Batch Processing
+- Individual results for each image pair
+- **aggregated_differences.png**: Average differences across all pairs
+- **aggregated_results.json**: Mean and standard deviation
+
+## GPU Configuration
+
+Default GPU is set to `cuda:5` via `CUDA_VISIBLE_DEVICES=5` in shell scripts.
+
+To use a different GPU:
 
 ```bash
-# 셸 스크립트 수정
-vim run_analysis.sh
-# DEVICE="cuda:5" → DEVICE="cuda:0" 등으로 변경
+# Modify shell script
+vim train_vae.sh  # or run_analysis.sh
+# Change: export CUDA_VISIBLE_DEVICES=5
 
-# 또는 실행 시 지정
-./run_analysis.sh single --img1 a.jpg --img2 b.jpg --device cuda:0
+# Or set environment variable before running
+export CUDA_VISIBLE_DEVICES=0
+python train_vae.py [args...]
 ```
 
-## 예제 시나리오: 유방암 초음파
+## Example Workflow: Breast Tumor Analysis
 
-### 시나리오
-- 종양이 있는 초음파 이미지 (positive)
-- 종양을 마스킹한 초음파 이미지 (negative)
-- **목표**: VAE 디코더가 종양의 유무를 어느 레이어에서 가장 크게 인식하는가?
+### Scenario
+Train a VAE on breast tumor ultrasound images and analyze how well it reconstructs tumor regions.
 
-### 분석 절차
+### Step 1: Prepare Training Data
 
-1. 이미지 준비
 ```bash
-mkdir -p data/breast_ultrasound/positive
-mkdir -p data/breast_ultrasound/negative
-# 이미지 복사
+# Organize training images
+ls ../data/breast_tumors/train_images/
+# benign (1).png, benign (10).png, malignant (1).png, ...
 ```
 
-2. 단일 쌍 테스트
+### Step 2: Train VAE
+
 ```bash
+# Start training
+./train_vae.sh
+
+# Monitor training progress
+# Watch terminal output for loss values
+# Check reconstructions in vae_output/reconstructions/
+```
+
+### Step 3: Evaluate Training
+
+```bash
+# View training curves
+open vae_output/training_curves.png
+
+# Check final reconstruction quality
+open vae_output/reconstructions/recon_epoch_100.png
+
+# Load trained model for inference
+# Model saved at: vae_output/vae_final.pt
+```
+
+### Step 4: Analyze Layer Differences (Optional)
+
+```bash
+# Analyze which layers detect tumor presence
 ./run_analysis.sh single \
-    --img1 data/breast_ultrasound/positive/sample.jpg \
-    --img2 data/breast_ultrasound/negative/sample.jpg \
+    --img1 ../data/breast_tumors/train_images/malignant_1.png \
+    --img2 ../data/breast_tumors/train_images/benign_1.png \
     --method both
 ```
 
-3. 결과 확인
-```bash
-# 결과 확인
-ls outputs/single/
-# layer_differences.json, layer_differences_plot.png, reconstructed_images.png
+## Troubleshooting
 
-# 상위 레이어 확인 (터미널 출력에서)
-# TOP 5 Layers with Largest Differences 참고
+### CUDA Out of Memory
+
+Reduce batch size or use CPU:
+
+```bash
+python train_vae.py --batch_size 4 --device cpu
 ```
 
-4. 전체 데이터 분석
-```bash
-./run_analysis.sh folder \
-    --folder data/breast_ultrasound \
-    --method both
+### NumPy Compatibility Issues
 
-# 집계 결과 확인
-open outputs/batch/aggregated_differences.png
+If you encounter NumPy version conflicts, the training script avoids matplotlib imports during training to prevent issues with NumPy 2.x.
+
+### Missing Config File
+
+Ensure Stable Diffusion config file exists:
+
+```bash
+ls ../stable-diffusion/configs/stable-diffusion/v1-inference.yaml
 ```
 
-### 해석
+### Checkpoint Loading Issues
 
-- **초기 레이어** (conv_in, mid blocks)에서 차이가 크면:
-  → VAE가 저수준 특징(texture, edge)에서 차이 인식
+To resume from checkpoint:
 
-- **중간 레이어** (up blocks)에서 차이가 크면:
-  → 의미적 특징 레벨에서 차이 인식
-
-- **후기 레이어** (conv_out)에서 차이가 크면:
-  → 최종 이미지 재구성 단계에서 차이 발생
-
-## 문제 해결
-
-### 모델 체크포인트 없음
-```bash
-# 모델 다운로드 필요
-cd ../stable-diffusion
-# Hugging Face 등에서 Stable Diffusion v1.5 모델 다운로드
+```python
+checkpoint = torch.load('vae_output/checkpoints/vae_epoch_50.pt')
+model.load_state_dict(checkpoint['model_state_dict'])
+optimizer.load_state_dict(checkpoint['optimizer_state_dict'])
+start_epoch = checkpoint['epoch']
 ```
 
-### CUDA out of memory
-- GPU 메모리 부족 시 더 작은 배치나 CPU 사용
-```bash
-./run_analysis.sh single --img1 a.jpg --img2 b.jpg --device cpu
+## Advanced Customization
+
+### Modify Architecture
+
+Edit the config file to change VAE architecture:
+- Number of layers
+- Feature dimensions
+- Attention mechanisms
+
+### Custom Loss Weights
+
+Adjust KL weight for different regularization strengths:
+- Higher `kl_weight`: Smoother latent space, potentially blurrier reconstructions
+- Lower `kl_weight`: Better reconstructions, potentially less organized latent space
+
+### Different Optimizers
+
+Modify `train_vae.py` to use different optimizers:
+
+```python
+# Replace Adam with SGD, AdamW, etc.
+optimizer = optim.SGD(vae.parameters(), lr=learning_rate, momentum=0.9)
 ```
 
-### 이미지 크기 문제
-- 자동으로 512×512로 리사이즈되므로 모든 크기 지원
+## Notes
 
-## 추가 커스터마이징
+- This tool uses Stable Diffusion VAE architecture for research purposes
+- Training from scratch requires sufficient data for good generalization
+- Medical image analysis results should not be used for clinical diagnosis
+- Always validate results with domain experts
 
-`analyze_vae_layers.py`를 직접 수정하여:
-- 다른 레이어 추가/제거 (`_register_hooks` 메서드)
-- 다른 차이 측정 방법 추가 (`compute_difference` 메서드)
-- 시각화 스타일 변경 (`visualize_differences` 메서드)
+## Citation
 
-## 참고
-
-- 이 도구는 Stable Diffusion의 VAE를 사용합니다
-- 의료 영상 분석에 특화된 도구는 아니므로 연구 목적으로만 사용하세요
-- 실제 임상 진단에는 사용하지 마세요
+If you use this code for research, please cite the relevant papers:
+- Stable Diffusion VAE architecture
+- Your research paper (when published)
