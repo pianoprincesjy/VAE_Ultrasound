@@ -1,0 +1,222 @@
+{
+  "decoder.conv_in": {
+    "l2_value": 0.00046087760711088777,
+    "cosine_value": 0.1331835389137268,
+    "shape": [
+      1,
+      512,
+      64,
+      64
+    ],
+    "method": "Both"
+  },
+  "decoder.mid.block_1": {
+    "l2_value": 0.00046763845602981746,
+    "cosine_value": 0.13499420881271362,
+    "shape": [
+      1,
+      512,
+      64,
+      64
+    ],
+    "method": "Both"
+  },
+  "decoder.mid.attn_1": {
+    "l2_value": 0.0004613266501110047,
+    "cosine_value": 0.13371777534484863,
+    "shape": [
+      1,
+      512,
+      64,
+      64
+    ],
+    "method": "Both"
+  },
+  "decoder.mid.block_2": {
+    "l2_value": 0.0004799493763130158,
+    "cosine_value": 0.13753479719161987,
+    "shape": [
+      1,
+      512,
+      64,
+      64
+    ],
+    "method": "Both"
+  },
+  "decoder.up.0.block.0": {
+    "l2_value": 0.002155056456103921,
+    "cosine_value": 0.0526004433631897,
+    "shape": [
+      1,
+      128,
+      512,
+      512
+    ],
+    "method": "Both"
+  },
+  "decoder.up.0.block.1": {
+    "l2_value": 0.0022923729848116636,
+    "cosine_value": 0.048525989055633545,
+    "shape": [
+      1,
+      128,
+      512,
+      512
+    ],
+    "method": "Both"
+  },
+  "decoder.up.0.block.2": {
+    "l2_value": 0.0024616247974336147,
+    "cosine_value": 0.04454469680786133,
+    "shape": [
+      1,
+      128,
+      512,
+      512
+    ],
+    "method": "Both"
+  },
+  "decoder.up.1.block.0": {
+    "l2_value": 0.0011189031647518277,
+    "cosine_value": 0.0935746431350708,
+    "shape": [
+      1,
+      256,
+      256,
+      256
+    ],
+    "method": "Both"
+  },
+  "decoder.up.1.block.1": {
+    "l2_value": 0.0011109719052910805,
+    "cosine_value": 0.09358948469161987,
+    "shape": [
+      1,
+      256,
+      256,
+      256
+    ],
+    "method": "Both"
+  },
+  "decoder.up.1.block.2": {
+    "l2_value": 0.001031714491546154,
+    "cosine_value": 0.0931043028831482,
+    "shape": [
+      1,
+      256,
+      256,
+      256
+    ],
+    "method": "Both"
+  },
+  "decoder.up.1.upsample": {
+    "l2_value": 0.0012839417904615402,
+    "cosine_value": 0.08288019895553589,
+    "shape": [
+      1,
+      256,
+      512,
+      512
+    ],
+    "method": "Both"
+  },
+  "decoder.up.2.block.0": {
+    "l2_value": 0.0008993773371912539,
+    "cosine_value": 0.1303756833076477,
+    "shape": [
+      1,
+      512,
+      128,
+      128
+    ],
+    "method": "Both"
+  },
+  "decoder.up.2.block.1": {
+    "l2_value": 0.0009266923298127949,
+    "cosine_value": 0.13319551944732666,
+    "shape": [
+      1,
+      512,
+      128,
+      128
+    ],
+    "method": "Both"
+  },
+  "decoder.up.2.block.2": {
+    "l2_value": 0.0008190943044610322,
+    "cosine_value": 0.13021790981292725,
+    "shape": [
+      1,
+      512,
+      128,
+      128
+    ],
+    "method": "Both"
+  },
+  "decoder.up.2.upsample": {
+    "l2_value": 0.0012928146170452237,
+    "cosine_value": 0.11445575952529907,
+    "shape": [
+      1,
+      512,
+      256,
+      256
+    ],
+    "method": "Both"
+  },
+  "decoder.up.3.block.0": {
+    "l2_value": 0.0005182703607715666,
+    "cosine_value": 0.14589166641235352,
+    "shape": [
+      1,
+      512,
+      64,
+      64
+    ],
+    "method": "Both"
+  },
+  "decoder.up.3.block.1": {
+    "l2_value": 0.0005400034715421498,
+    "cosine_value": 0.1525929570198059,
+    "shape": [
+      1,
+      512,
+      64,
+      64
+    ],
+    "method": "Both"
+  },
+  "decoder.up.3.block.2": {
+    "l2_value": 0.0004971052403561771,
+    "cosine_value": 0.1478743553161621,
+    "shape": [
+      1,
+      512,
+      64,
+      64
+    ],
+    "method": "Both"
+  },
+  "decoder.up.3.upsample": {
+    "l2_value": 0.0009111730032600462,
+    "cosine_value": 0.13813477754592896,
+    "shape": [
+      1,
+      512,
+      128,
+      128
+    ],
+    "method": "Both"
+  },
+  "decoder.conv_out": {
+    "l2_value": 0.0002518525967995326,
+    "cosine_value": 0.05096083879470825,
+    "shape": [
+      1,
+      3,
+      512,
+      512
+    ],
+    "method": "Both"
+  }
+}
