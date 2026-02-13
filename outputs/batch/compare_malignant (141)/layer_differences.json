@@ -1,7 +1,7 @@
 {
   "decoder.conv_in": {
-    "l2_value": 0.00036244469811208546,
-    "cosine_value": 0.12883144617080688,
+    "l2_value": 0.00018667273980099708,
+    "cosine_value": 0.13218998908996582,
     "shape": [
       1,
       512,
@@ -11,8 +11,8 @@
     "method": "Both"
   },
   "decoder.mid.block_1": {
-    "l2_value": 0.00040585699025541544,
-    "cosine_value": 0.15845966339111328,
+    "l2_value": 0.00022045163495931774,
+    "cosine_value": 0.09288209676742554,
     "shape": [
       1,
       512,
@@ -22,8 +22,8 @@
     "method": "Both"
   },
   "decoder.mid.attn_1": {
-    "l2_value": 0.0004043675144203007,
-    "cosine_value": 0.15050113201141357,
+    "l2_value": 0.0002206531207775697,
+    "cosine_value": 0.07952350378036499,
     "shape": [
       1,
       512,
@@ -33,8 +33,8 @@
     "method": "Both"
   },
   "decoder.mid.block_2": {
-    "l2_value": 0.0004062210791744292,
-    "cosine_value": 0.13928574323654175,
+    "l2_value": 0.00022924330551177263,
+    "cosine_value": 0.07789647579193115,
     "shape": [
       1,
       512,
@@ -44,8 +44,8 @@
     "method": "Both"
   },
   "decoder.up.0.block.0": {
-    "l2_value": 0.006319444626569748,
-    "cosine_value": 0.47537535429000854,
+    "l2_value": 0.005345500074326992,
+    "cosine_value": 0.7001341283321381,
     "shape": [
       1,
       128,
@@ -55,8 +55,8 @@
     "method": "Both"
   },
   "decoder.up.0.block.1": {
-    "l2_value": 0.0072064935229718685,
-    "cosine_value": 0.4954347014427185,
+    "l2_value": 0.006496663670986891,
+    "cosine_value": 0.7473011314868927,
     "shape": [
       1,
       128,
@@ -66,8 +66,8 @@
     "method": "Both"
   },
   "decoder.up.0.block.2": {
-    "l2_value": 0.008240542374551296,
-    "cosine_value": 0.5087676346302032,
+    "l2_value": 0.007844889536499977,
+    "cosine_value": 0.7771384716033936,
     "shape": [
       1,
       128,
@@ -77,8 +77,8 @@
     "method": "Both"
   },
   "decoder.up.1.block.0": {
-    "l2_value": 0.0009502943721599877,
-    "cosine_value": 0.10566866397857666,
+    "l2_value": 0.000578106555622071,
+    "cosine_value": 0.05558711290359497,
     "shape": [
       1,
       256,
@@ -88,8 +88,8 @@
     "method": "Both"
   },
   "decoder.up.1.block.1": {
-    "l2_value": 0.000970818568021059,
-    "cosine_value": 0.11201435327529907,
+    "l2_value": 0.0005850918241776526,
+    "cosine_value": 0.05537986755371094,
     "shape": [
       1,
       256,
@@ -99,8 +99,8 @@
     "method": "Both"
   },
   "decoder.up.1.block.2": {
-    "l2_value": 0.0009326825966127217,
-    "cosine_value": 0.12652593851089478,
+    "l2_value": 0.0005667295772582293,
+    "cosine_value": 0.07067692279815674,
     "shape": [
       1,
       256,
@@ -110,8 +110,8 @@
     "method": "Both"
   },
   "decoder.up.1.upsample": {
-    "l2_value": 0.001832624082453549,
-    "cosine_value": 0.2468520998954773,
+    "l2_value": 0.0011023491388186812,
+    "cosine_value": 0.16475361585617065,
     "shape": [
       1,
       256,
@@ -121,8 +121,8 @@
     "method": "Both"
   },
   "decoder.up.2.block.0": {
-    "l2_value": 0.0006627236725762486,
-    "cosine_value": 0.09954720735549927,
+    "l2_value": 0.0004006714734714478,
+    "cosine_value": 0.05782216787338257,
     "shape": [
       1,
       512,
@@ -132,8 +132,8 @@
     "method": "Both"
   },
   "decoder.up.2.block.1": {
-    "l2_value": 0.0006750709726475179,
-    "cosine_value": 0.09785133600234985,
+    "l2_value": 0.000411910266848281,
+    "cosine_value": 0.06004828214645386,
     "shape": [
       1,
       512,
@@ -143,8 +143,8 @@
     "method": "Both"
   },
   "decoder.up.2.block.2": {
-    "l2_value": 0.0006016002153046429,
-    "cosine_value": 0.10764968395233154,
+    "l2_value": 0.0003697112260852009,
+    "cosine_value": 0.07279056310653687,
     "shape": [
       1,
       512,
@@ -154,8 +154,8 @@
     "method": "Both"
   },
   "decoder.up.2.upsample": {
-    "l2_value": 0.0009608893888071179,
-    "cosine_value": 0.10003751516342163,
+    "l2_value": 0.0005927765159867704,
+    "cosine_value": 0.06590539216995239,
     "shape": [
       1,
       512,
@@ -165,8 +165,8 @@
     "method": "Both"
   },
   "decoder.up.3.block.0": {
-    "l2_value": 0.0004295523394830525,
-    "cosine_value": 0.13528895378112793,
+    "l2_value": 0.000248556025326252,
+    "cosine_value": 0.07784831523895264,
     "shape": [
       1,
       512,
@@ -176,8 +176,8 @@
     "method": "Both"
   },
   "decoder.up.3.block.1": {
-    "l2_value": 0.00041742390021681786,
-    "cosine_value": 0.1243596076965332,
+    "l2_value": 0.0002433882764307782,
+    "cosine_value": 0.0692981481552124,
     "shape": [
       1,
       512,
@@ -187,8 +187,8 @@
     "method": "Both"
   },
   "decoder.up.3.block.2": {
-    "l2_value": 0.0003702793619595468,
-    "cosine_value": 0.12049317359924316,
+    "l2_value": 0.00022778048878535628,
+    "cosine_value": 0.07811987400054932,
     "shape": [
       1,
       512,
@@ -198,8 +198,8 @@
     "method": "Both"
   },
   "decoder.up.3.upsample": {
-    "l2_value": 0.0006695478805340827,
-    "cosine_value": 0.10673093795776367,
+    "l2_value": 0.0004069202987011522,
+    "cosine_value": 0.06625044345855713,
     "shape": [
       1,
       512,
@@ -209,8 +209,8 @@
     "method": "Both"
   },
   "decoder.conv_out": {
-    "l2_value": 0.00017471627021829286,
-    "cosine_value": 0.047543466091156006,
+    "l2_value": 0.000176765121674786,
+    "cosine_value": 0.05102074146270752,
     "shape": [
       1,
       3,

@@ -40,15 +40,50 @@ class VAELayerAnalyzer:
         # 체크포인트 로드
         if checkpoint_path and os.path.exists(checkpoint_path):
             sd = torch.load(checkpoint_path, map_location="cpu")
-            if "state_dict" in sd:
+            
+            # Try different checkpoint formats
+            vae_sd = None
+            
+            # Format 1: Our own saved checkpoint with 'model_state_dict'
+            if "model_state_dict" in sd:
+                print("Detected checkpoint format: trained VAE (model_state_dict)")
+                vae_sd = sd["model_state_dict"]
+            
+            # Format 2: Stable Diffusion checkpoint with 'state_dict'
+            elif "state_dict" in sd:
+                print("Detected checkpoint format: Stable Diffusion (state_dict)")
                 sd = sd["state_dict"]
-            # first_stage_model로 시작하는 키만 추출
-            vae_sd = {}
-            for k, v in sd.items():
-                if k.startswith("first_stage_model."):
-                    vae_sd[k.replace("first_stage_model.", "")] = v
-            self.vae.load_state_dict(vae_sd, strict=False)
-            print("Checkpoint loaded successfully!")
+                # Extract first_stage_model weights
+                vae_sd = {}
+                for k, v in sd.items():
+                    if k.startswith("first_stage_model."):
+                        vae_sd[k.replace("first_stage_model.", "")] = v
+            
+            # Format 3: Direct state dict (no wrapper)
+            else:
+                print("Detected checkpoint format: direct state_dict")
+                # Check if keys have 'first_stage_model.' prefix
+                has_prefix = any(k.startswith("first_stage_model.") for k in sd.keys())
+                if has_prefix:
+                    vae_sd = {}
+                    for k, v in sd.items():
+                        if k.startswith("first_stage_model."):
+                            vae_sd[k.replace("first_stage_model.", "")] = v
+                else:
+                    vae_sd = sd
+            
+            if vae_sd and len(vae_sd) > 0:
+                missing_keys, unexpected_keys = self.vae.load_state_dict(vae_sd, strict=False)
+                print(f"Loaded {len(vae_sd)} parameters")
+                if missing_keys:
+                    print(f"Missing keys: {len(missing_keys)}")
+                if unexpected_keys:
+                    print(f"Unexpected keys: {len(unexpected_keys)}")
+                print("Checkpoint loaded successfully!")
+            else:
+                print("Warning: No valid VAE weights found in checkpoint")
+        else:
+            print(f"Warning: Checkpoint not found: {checkpoint_path}")
         
         self.vae.to(device)
         self.vae.eval()

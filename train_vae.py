@@ -67,6 +67,7 @@ def vae_loss(recon_x, x, posterior, kl_weight=1.0):
 def train_vae(
     train_dir,
     config_path,
+    checkpoint_path=None,
     output_dir='vae_output',
     batch_size=8,
     epochs=100,
@@ -77,11 +78,12 @@ def train_vae(
     save_interval=10
 ):
     """
-    Train VAE from scratch on breast tumor images
+    Train VAE on breast tumor images
     
     Args:
         train_dir: path to training images
         config_path: path to VAE config file
+        checkpoint_path: path to pretrained checkpoint (None for training from scratch)
         output_dir: directory to save outputs
         batch_size: batch size for training
         epochs: number of training epochs
@@ -101,12 +103,63 @@ def train_vae(
     config = OmegaConf.load(config_path)
     model_config = config.model.params.first_stage_config
     
-    # VAE 모델 생성 (가중치는 랜덤 초기화)
+    # VAE 모델 생성
     vae = instantiate_from_config(model_config)
+    
+    # Load pretrained weights if checkpoint is provided
+    if checkpoint_path and os.path.exists(checkpoint_path):
+        print(f"Loading pretrained weights from: {checkpoint_path}")
+        sd = torch.load(checkpoint_path, map_location="cpu")
+        
+        # Try different checkpoint formats
+        vae_sd = None
+        
+        # Format 1: Our own saved checkpoint with 'model_state_dict'
+        if "model_state_dict" in sd:
+            print("Detected checkpoint format: trained VAE (model_state_dict)")
+            vae_sd = sd["model_state_dict"]
+        
+        # Format 2: Stable Diffusion checkpoint with 'state_dict'
+        elif "state_dict" in sd:
+            print("Detected checkpoint format: Stable Diffusion (state_dict)")
+            sd = sd["state_dict"]
+            # Extract first_stage_model weights
+            vae_sd = {}
+            for k, v in sd.items():
+                if k.startswith("first_stage_model."):
+                    vae_sd[k.replace("first_stage_model.", "")] = v
+        
+        # Format 3: Direct state dict (no wrapper)
+        else:
+            print("Detected checkpoint format: direct state_dict")
+            # Check if keys have 'first_stage_model.' prefix
+            has_prefix = any(k.startswith("first_stage_model.") for k in sd.keys())
+            if has_prefix:
+                vae_sd = {}
+                for k, v in sd.items():
+                    if k.startswith("first_stage_model."):
+                        vae_sd[k.replace("first_stage_model.", "")] = v
+            else:
+                vae_sd = sd
+        
+        if vae_sd and len(vae_sd) > 0:
+            missing_keys, unexpected_keys = vae.load_state_dict(vae_sd, strict=False)
+            print(f"Loaded {len(vae_sd)} pretrained parameters")
+            if missing_keys:
+                print(f"Missing keys: {len(missing_keys)}")
+            if unexpected_keys:
+                print(f"Unexpected keys: {len(unexpected_keys)}")
+            print("Mode: Fine-tuning from pretrained weights")
+        else:
+            print("Warning: No valid VAE weights found in checkpoint")
+            print("Mode: Training from scratch with random initialization")
+    else:
+        if checkpoint_path:
+            print(f"Warning: Checkpoint path provided but file not found: {checkpoint_path}")
+        print("Mode: Training from scratch with random initialization")
+    
     vae.to(device)
     vae.train()
-    
-    print(f"VAE model initialized with random weights")
     print(f"Model architecture: {type(vae).__name__}")
     
     # Optimizer
@@ -307,7 +360,9 @@ if __name__ == '__main__':
     parser.add_argument('--config_path', type=str,
                         default='../stable-diffusion/configs/stable-diffusion/v1-inference.yaml',
                         help='Path to VAE config file')
-    parser.add_argument('--output_dir', type=str, default='vae_output',
+    parser.add_argument('--checkpoint_path', type=str, default=None,
+                        help='Path to pretrained checkpoint (leave empty for training from scratch)')
+    parser.add_argument('--output_dir', type=str, default='trained_models',
                         help='Directory to save outputs')
     parser.add_argument('--batch_size', type=int, default=8,
                         help='Batch size')
@@ -330,6 +385,7 @@ if __name__ == '__main__':
     model, history = train_vae(
         train_dir=args.train_dir,
         config_path=args.config_path,
+        checkpoint_path=args.checkpoint_path,
         output_dir=args.output_dir,
         batch_size=args.batch_size,
         epochs=args.epochs,

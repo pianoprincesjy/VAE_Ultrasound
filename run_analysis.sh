@@ -11,7 +11,7 @@ NC='\033[0m' # No Color
 
 # Default paths (수정 필요시 여기를 변경하세요)
 CONFIG="../stable-diffusion/configs/latent-diffusion/txt2img-1p4B-eval.yaml"
-CHECKPOINT="../stable-diffusion/models/ldm/text2img-large/model.ckpt"
+CHECKPOINT="./trained_models/checkpoints/vae_epoch_4.pt"
 DEVICE="cuda:5"  # GPU 번호 변경 가능
 OUTPUT_DIR="./outputs"
 
