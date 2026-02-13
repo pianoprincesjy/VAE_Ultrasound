@@ -1,7 +1,7 @@
 # VAE Decoder Layer-wise Analysis Tool
-
+나는서재윤 
 Stable Diffusion VAE의 디코더 레이어별로 두 이미지 간의 차이를 분석하는 도구입니다.
-
+dㅇㅇㅇ아ㅓㅏ어ㅏ어ㅏ어
 ## 기능
 
 - 두 이미지를 VAE에 입력하여 디코더의 각 레이어 출력 수집
